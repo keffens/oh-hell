@@ -22,7 +22,7 @@ async function updateUser(db: Firestore, user: User) {
   await setDoc(doc(db, "users", user.uid), user);
 }
 
-export function userState(): [User, (user: User) => void] {
+export function useUser(): [User, (user: User) => void] {
   const [user, setState] = useState<User>({});
   useEffect(() => {
     initFirebase();

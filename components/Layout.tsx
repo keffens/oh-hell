@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Alert, Typography } from "@mui/material";
-import { userState } from "../lib/firebase";
+import { useUser } from "../lib/firebase";
 
 export interface LayoutProps {
   title: string;
@@ -8,7 +8,7 @@ export interface LayoutProps {
 }
 
 export default function Layout({ title, children }: LayoutProps) {
-  const [user, updateUser] = userState();
+  const [user, updateUser] = useUser();
 
   return (
     <>

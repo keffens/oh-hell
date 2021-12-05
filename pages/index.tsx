@@ -9,10 +9,10 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import Layout from "../components/Layout";
-import { userState } from "../lib/firebase/user";
+import { useUser } from "../lib/firebase/user";
 
 export default function Home() {
-  const [user, updateUser] = userState();
+  const [user, updateUser] = useUser();
   const [room, setRoom] = useState("");
 
   return (
