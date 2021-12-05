@@ -1,5 +1,6 @@
 import Head from "next/head";
-import { Container, Typography, createTheme } from "@mui/material";
+import { Alert, Typography } from "@mui/material";
+import { userState } from "../lib/firebase";
 
 export interface LayoutProps {
   title: string;
@@ -7,6 +8,8 @@ export interface LayoutProps {
 }
 
 export default function Layout({ title, children }: LayoutProps) {
+  const [user, updateUser] = userState();
+
   return (
     <>
       <Head>
@@ -39,6 +42,15 @@ export default function Layout({ title, children }: LayoutProps) {
         )}
         {children}
       </main>
+      {user.uid && !user.hideCookiePopup && (
+        <Alert
+          severity="info"
+          onClose={() => updateUser({ ...user, hideCookiePopup: true })}
+          sx={{ position: "fixed", bottom: 0, left: 0, right: 0, m: 2 }}
+        >
+          This page uses cookies.
+        </Alert>
+      )}
     </>
   );
 }

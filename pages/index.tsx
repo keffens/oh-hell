@@ -9,10 +9,12 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import Layout from "../components/Layout";
+import { userState } from "../lib/firebase/user";
 
 export default function Home() {
-  const [name, setName] = useState("");
+  const [user, updateUser] = userState();
   const [room, setRoom] = useState("");
+
   return (
     <Layout title="Lobby">
       <Container maxWidth="xs">
@@ -23,8 +25,10 @@ export default function Home() {
                 id="name"
                 label="Name"
                 placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value.trimStart())}
+                value={user.name ?? ""}
+                onChange={(e) =>
+                  updateUser({ ...user, name: e.target.value.trimStart() })
+                }
                 inputProps={{ maxLength: 16 }}
                 fullWidth
                 sx={{ mb: 2 }}
@@ -34,15 +38,15 @@ export default function Home() {
                 label="Room"
                 placeholder="Enter a room's id"
                 value={room}
-                onChange={(e) => setRoom(e.target.value.trim())}
+                onChange={(e) => setRoom(e.target.value.trim().toUpperCase())}
                 inputProps={{ maxLength: 6 }}
                 fullWidth
               />
             </Box>
           </CardContent>
           <CardActions>
-            <Button disabled={!name || !room}>Join room</Button>
-            <Button disabled={!name}>Create room</Button>
+            <Button disabled={!user.name || !room}>Join room</Button>
+            <Button disabled={!user.name}>Create room</Button>
           </CardActions>
         </Card>
       </Container>
