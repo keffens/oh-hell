@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { initFirebase } from "./init";
 
 export interface User {
+  // If `uid` is not set, the user is not initialized yet.
   uid?: string;
   name?: string;
   hideCookiePopup?: boolean;
