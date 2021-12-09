@@ -10,7 +10,7 @@ import { Room } from "../../lib/room";
 
 export default function RoomComponent() {
   const router = useRouter();
-  const { name } = router.query as { name: string };
+  const name = (router.query as { name: string }).name.trim().toUpperCase();
   const [room, setRoom] = useState<Room | null>(null);
   const [error, setError] = useState("");
 

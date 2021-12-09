@@ -12,6 +12,7 @@ import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 import ErrorAlert from "../components/ErrorAlert";
 import Layout from "../components/Layout";
+import LoadingOverlay from "../components/LoadingOverlay";
 import { useUser, userIdToken } from "../lib/firebase/user";
 import { Room, ROOM_NAME_LENGTH } from "../lib/room";
 
@@ -19,6 +20,7 @@ export default function Home() {
   const router = useRouter();
   const [user, updateUser] = useUser();
   const [room, setRoom] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   function goToRoom(name: string) {
@@ -26,6 +28,7 @@ export default function Home() {
   }
 
   async function createRoom() {
+    setLoading(true);
     const response = await fetch("api/createRoom", {
       method: "POST",
       body: JSON.stringify({ idToken: await userIdToken() }),
@@ -34,6 +37,7 @@ export default function Home() {
       setError(
         `${response.status} Failed to create room: ${response.statusText}`
       );
+      setLoading(false);
       return;
     }
     const { name } = (await response.json()) as Room;
@@ -44,7 +48,8 @@ export default function Home() {
     <Layout title="Lobby">
       <Container maxWidth="xs">
         <Stack spacing={2}>
-          <Card>
+          <Card sx={{ position: "relative" }}>
+            <LoadingOverlay show={loading} />
             <CardContent>
               <Box component="form" noValidate autoComplete="off">
                 <TextField
@@ -72,12 +77,17 @@ export default function Home() {
             </CardContent>
             <CardActions>
               <Button
-                disabled={!user.name || room.length < ROOM_NAME_LENGTH}
-                onClick={() => goToRoom(room)}
+                disabled={
+                  loading || !user.name || room.length < ROOM_NAME_LENGTH
+                }
+                onClick={() => {
+                  setLoading(true);
+                  goToRoom(room);
+                }}
               >
                 Join room
               </Button>
-              <Button disabled={!user.name} onClick={createRoom}>
+              <Button disabled={loading || !user.name} onClick={createRoom}>
                 Create room
               </Button>
             </CardActions>
