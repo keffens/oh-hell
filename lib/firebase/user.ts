@@ -35,7 +35,6 @@ export function useUser(): [User, (user: User) => void] {
         throw new Error("Failed to log in");
       }
       const snapshot = await getDoc(doc(db, "users", u.uid));
-      console.log(snapshot.data());
       if (snapshot.data()?.uid) {
         setState(snapshot.data() as User);
       } else {
@@ -51,4 +50,12 @@ export function useUser(): [User, (user: User) => void] {
       setState(u);
     },
   ];
+}
+
+export function userIdToken(): Promise<string> {
+  const auth = getAuth();
+  if (!auth.currentUser) {
+    throw new Error("You are not logged in");
+  }
+  return auth.currentUser.getIdToken();
 }

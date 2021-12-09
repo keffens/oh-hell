@@ -13,7 +13,7 @@ export default function Layout({ title, children }: LayoutProps) {
   return (
     <>
       <Head>
-        <title>Oh Hell! - {title}</title>
+        <title>Oh Hell!{title && ` - ${title}`}</title>
         <meta name="description" content="Oh Hell! - the card game" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -46,7 +46,14 @@ export default function Layout({ title, children }: LayoutProps) {
         <Alert
           severity="info"
           onClose={() => updateUser({ ...user, hideCookiePopup: true })}
-          sx={{ position: "fixed", bottom: 0, left: 0, right: 0, m: 2 }}
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            m: 2,
+            boxShadow: 1,
+          }}
         >
           This page uses cookies.
         </Alert>
