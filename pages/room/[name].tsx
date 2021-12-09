@@ -1,16 +1,15 @@
 import { doc, getFirestore, onSnapshot } from "@firebase/firestore";
 import { CircularProgress, Container, Stack } from "@mui/material";
-import { Box } from "@mui/system";
 import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
 import ErrorAlert from "../../components/ErrorAlert";
 import Layout from "../../components/Layout";
 import { initFirebase } from "../../lib/firebase";
-import { Room } from "../../lib/room";
+import { normalizeRoomName, Room } from "../../lib/room";
 
 export default function RoomComponent() {
   const router = useRouter();
-  const name = (router.query as { name: string }).name?.trim().toUpperCase();
+  const name = normalizeRoomName((router.query as { name: string }).name);
   const [room, setRoom] = useState<Room | null>(null);
   const [error, setError] = useState("");
 

@@ -14,7 +14,7 @@ import ErrorAlert from "../components/ErrorAlert";
 import Layout from "../components/Layout";
 import LoadingOverlay from "../components/LoadingOverlay";
 import { useUser, userIdToken } from "../lib/firebase/user";
-import { Room, ROOM_NAME_LENGTH } from "../lib/room";
+import { Room, MAX_ROOM_NAME_LENGTH, normalizeRoomName } from "../lib/room";
 
 export default function Home() {
   const router = useRouter();
@@ -69,17 +69,15 @@ export default function Home() {
                   label="Room"
                   placeholder="Enter a room's id"
                   value={room}
-                  onChange={(e) => setRoom(e.target.value.trim().toUpperCase())}
-                  inputProps={{ maxLength: 6 }}
+                  onChange={(e) => setRoom(normalizeRoomName(e.target.value))}
+                  inputProps={{ maxLength: MAX_ROOM_NAME_LENGTH }}
                   fullWidth
                 />
               </Box>
             </CardContent>
             <CardActions>
               <Button
-                disabled={
-                  loading || !user.name || room.length < ROOM_NAME_LENGTH
-                }
+                disabled={loading || !user.name || !room}
                 onClick={() => {
                   setLoading(true);
                   goToRoom(room);

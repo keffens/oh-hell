@@ -12,6 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     initFirebaseAdmin();
     const uid = await authenticateUser(req);
     const room = createRoom(uid);
+    // TODO: Verify the generated room name does not exist yet.
     await getFirestore().doc(`rooms/${room.name}`).create(room);
     res.status(200).json(room);
   } catch (e) {
