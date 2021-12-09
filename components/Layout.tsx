@@ -3,8 +3,8 @@ import { Alert, Typography } from "@mui/material";
 import { useUser } from "../lib/firebase";
 
 export interface LayoutProps {
-  title: string;
-  children: React.ReactNode;
+  title?: string;
+  children?: React.ReactNode;
 }
 
 export default function Layout({ title, children }: LayoutProps) {

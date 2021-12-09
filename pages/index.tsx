@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -11,6 +10,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
+import ErrorAlert from "../components/ErrorAlert";
 import Layout from "../components/Layout";
 import { useUser, userIdToken } from "../lib/firebase/user";
 import { Room, ROOM_NAME_LENGTH } from "../lib/room";
@@ -82,15 +82,7 @@ export default function Home() {
               </Button>
             </CardActions>
           </Card>
-          {error && (
-            <Alert
-              severity="error"
-              onClose={() => setError("")}
-              sx={{ boxShadow: 1 }}
-            >
-              {error}
-            </Alert>
-          )}
+          <ErrorAlert error={error} setError={setError} />
         </Stack>
       </Container>
     </Layout>
