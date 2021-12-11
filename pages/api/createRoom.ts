@@ -9,7 +9,10 @@ import { getFirestore } from "firebase-admin/firestore";
 import { User } from "../../lib/firebase";
 import { verifyUser } from "../../lib/server_side/verification";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     initFirebaseAdmin();
     const uid = await authenticateUser(req);
@@ -29,4 +32,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   } catch (e) {
     handleError(e, res);
   }
-};
+}

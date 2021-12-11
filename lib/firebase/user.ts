@@ -16,6 +16,12 @@ export interface User {
   hideCookiePopup?: boolean;
 }
 
+// Same as User but enforces uid and string to be set.
+export interface VerifiedUser extends User {
+  uid: string;
+  name: string;
+}
+
 async function updateUser(db: Firestore, user: User) {
   if (!user.uid) {
     throw new Error("Cannot save a user without 'uid'");

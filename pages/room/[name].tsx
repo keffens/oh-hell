@@ -1,5 +1,5 @@
 import { doc, getFirestore, onSnapshot } from "@firebase/firestore";
-import { CircularProgress, Container, Stack } from "@mui/material";
+import { CircularProgress, Stack } from "@mui/material";
 import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
 import ErrorAlert from "../../components/ErrorAlert";
@@ -36,7 +36,7 @@ export default function RoomComponent() {
         </Stack>
       )}
       {room?.players.map((player) => (
-        <div>{player.name}</div>
+        <div key={player.uid}>{player.name}</div>
       ))}
       {/* TODO: Add the room display here */}
       <ErrorAlert error={error} setError={setError} />
