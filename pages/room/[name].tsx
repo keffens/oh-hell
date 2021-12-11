@@ -30,15 +30,13 @@ export default function RoomComponent() {
 
   return (
     <Layout title={`Room ${name}`}>
-      <Container maxWidth="lg">
-        {!room && !error && (
-          <Stack>
-            <CircularProgress sx={{ alignSelf: "center" }} />
-          </Stack>
-        )}
-        {/* TODO: Add the room display here */}
-        <ErrorAlert error={error} setError={setError} />
-      </Container>
+      {!room && !error && (
+        <Stack>
+          <CircularProgress sx={{ alignSelf: "center" }} />
+        </Stack>
+      )}
+      {/* TODO: Add the room display here */}
+      <ErrorAlert error={error} setError={setError} />
     </Layout>
   );
 }

@@ -4,7 +4,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  Container,
   Stack,
   TextField,
 } from "@mui/material";
@@ -13,8 +12,9 @@ import { useState } from "react";
 import ErrorAlert from "../components/ErrorAlert";
 import Layout from "../components/Layout";
 import LoadingOverlay from "../components/LoadingOverlay";
-import { useUser, userIdToken } from "../lib/firebase/user";
-import { Room, MAX_ROOM_NAME_LENGTH, normalizeRoomName } from "../lib/room";
+import { callCreateRoom } from "../lib/api";
+import { useUser } from "../lib/firebase/user";
+import { MAX_ROOM_NAME_LENGTH, normalizeRoomName } from "../lib/room";
 
 export default function Home() {
   const router = useRouter();
@@ -27,72 +27,62 @@ export default function Home() {
     router.push(`room/${name}`);
   }
 
-  async function createRoom() {
-    setLoading(true);
-    const response = await fetch("api/createRoom", {
-      method: "POST",
-      body: JSON.stringify({ idToken: await userIdToken() }),
-    });
-    if (response.status !== 200) {
-      setError(
-        `${response.status} Failed to create room: ${response.statusText}`
-      );
-      setLoading(false);
-      return;
-    }
-    const { name } = (await response.json()) as Room;
-    goToRoom(name);
-  }
-
   return (
-    <Layout title="Lobby">
-      <Container maxWidth="xs">
-        <Stack spacing={2}>
-          <Card sx={{ position: "relative" }}>
-            <LoadingOverlay show={loading} />
-            <CardContent>
-              <Box component="form" noValidate autoComplete="off">
-                <TextField
-                  id="name"
-                  label="Name"
-                  placeholder="Enter your name"
-                  value={user.name ?? ""}
-                  onChange={(e) =>
-                    updateUser({ ...user, name: e.target.value.trimStart() })
-                  }
-                  inputProps={{ maxLength: 16 }}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-                <TextField
-                  id="room"
-                  label="Room"
-                  placeholder="Enter a room's id"
-                  value={room}
-                  onChange={(e) => setRoom(normalizeRoomName(e.target.value))}
-                  inputProps={{ maxLength: MAX_ROOM_NAME_LENGTH }}
-                  fullWidth
-                />
-              </Box>
-            </CardContent>
-            <CardActions>
-              <Button
-                disabled={loading || !user.name || !room}
-                onClick={() => {
-                  setLoading(true);
-                  goToRoom(room);
-                }}
-              >
-                Join room
-              </Button>
-              <Button disabled={loading || !user.name} onClick={createRoom}>
-                Create room
-              </Button>
-            </CardActions>
-          </Card>
-          <ErrorAlert error={error} setError={setError} />
-        </Stack>
-      </Container>
+    <Layout title="Lobby" maxWidth="xs">
+      <Stack spacing={2}>
+        <Card sx={{ position: "relative" }}>
+          <LoadingOverlay show={loading} />
+          <CardContent>
+            <Box component="form" noValidate autoComplete="off">
+              <TextField
+                id="name"
+                label="Name"
+                placeholder="Enter your name"
+                value={user.name ?? ""}
+                onChange={(e) =>
+                  updateUser({ ...user, name: e.target.value.trimStart() })
+                }
+                inputProps={{ maxLength: 16 }}
+                fullWidth
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                id="room"
+                label="Room"
+                placeholder="Enter a room's id"
+                value={room}
+                onChange={(e) => setRoom(normalizeRoomName(e.target.value))}
+                inputProps={{ maxLength: MAX_ROOM_NAME_LENGTH }}
+                fullWidth
+              />
+            </Box>
+          </CardContent>
+          <CardActions>
+            <Button
+              disabled={loading || !user.name || !room}
+              onClick={() => {
+                setLoading(true);
+                goToRoom(room);
+              }}
+            >
+              Join room
+            </Button>
+            <Button
+              disabled={loading || !user.name}
+              onClick={async () => {
+                setLoading(true);
+                const res = await callCreateRoom();
+                setLoading(false);
+                if (res.data) goToRoom(res.data.name);
+                if (res.error) setError(error);
+              }}
+            >
+              Create room
+            </Button>
+          </CardActions>
+        </Card>
+        <ErrorAlert error={error} setError={setError} />
+      </Stack>
     </Layout>
   );
 }
