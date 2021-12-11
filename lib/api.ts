@@ -13,7 +13,8 @@ async function fetchWithAuth<Res>(req: any): Promise<[any, number, string]> {
     body: JSON.stringify({ ...req, idToken: await userIdToken() }),
   });
   if (response.status !== 200) {
-    return [undefined, response.status, response.statusText];
+    const { error } = await response.json();
+    return [undefined, response.status, error ?? response.statusText];
   }
   return [(await response.json()) as Res, 200, ""];
 }

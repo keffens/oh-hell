@@ -35,6 +35,9 @@ export default function RoomComponent() {
           <CircularProgress sx={{ alignSelf: "center" }} />
         </Stack>
       )}
+      {room?.players.map((player) => (
+        <div>{player.name}</div>
+      ))}
       {/* TODO: Add the room display here */}
       <ErrorAlert error={error} setError={setError} />
     </Layout>

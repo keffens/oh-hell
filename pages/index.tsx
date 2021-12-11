@@ -72,9 +72,9 @@ export default function Home() {
               onClick={async () => {
                 setLoading(true);
                 const res = await callCreateRoom();
-                setLoading(false);
                 if (res.data) goToRoom(res.data.name);
-                if (res.error) setError(error);
+                if (res.error) setError(res.error);
+                setLoading(false);
               }}
             >
               Create room

@@ -1,13 +1,19 @@
+import { VerifiedUser } from "./firebase";
 import { ADJECTIVES, ANIMAL_NAMES, randomWord } from "./words";
 
-const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 export const MIN_ROOM_NAME_LENGTH = 6; // "bad-ox"
 export const MAX_ROOM_NAME_LENGTH = 25; // "old-fashioned-hummingbird"
+
+export interface Player {
+  uid: string;
+  name: string;
+  cards?: number;
+}
 
 export interface Room {
   name: string;
   ownerId: string;
-  playerIds: string[];
+  players: Player[];
 }
 
 // Lowercase string, replace separators by dashes and remove all other
@@ -24,10 +30,10 @@ export function generateRoomName(): string {
   return randomWord(ADJECTIVES) + "-" + randomWord(ANIMAL_NAMES);
 }
 
-export function createRoom(ownerId: string): Room {
+export function generateRoom(user: VerifiedUser): Room {
   return {
     name: generateRoomName(),
-    ownerId,
-    playerIds: [ownerId],
+    ownerId: user.uid,
+    players: [{ uid: user.uid, name: user.name }],
   };
 }
