@@ -7,7 +7,7 @@ import {
 import { generateRoom } from "../../lib/room";
 import { getFirestore } from "firebase-admin/firestore";
 import { User } from "../../lib/firebase";
-import { verifyUser } from "../../lib/server_side/virification";
+import { verifyUser } from "../../lib/server_side/verification";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -17,6 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const user = verifyUser(
       (await db.doc(`users/${uid}`).get()).data() as User
     );
+    // TODO: Rooms older than a week (or a day?) should be overwritten.
     let room;
     let roomDoc;
     do {
