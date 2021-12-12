@@ -238,8 +238,6 @@ export const ADJECTIVES = [
 // Copied from
 // https://gist.github.com/lexicalbits/883f1867985208797be75a873d006bef
 export const ANIMAL_NAMES = [
-  "canidae",
-  "felidae",
   "cat",
   "cattle",
   "dog",

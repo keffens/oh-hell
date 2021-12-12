@@ -19,7 +19,7 @@ import { MAX_ROOM_NAME_LENGTH, normalizeRoomName } from "../lib/room";
 export default function Home() {
   const router = useRouter();
   const [user, updateUser] = useUser();
-  const [room, setRoom] = useState("");
+  const [roomName, setRoom] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -50,7 +50,7 @@ export default function Home() {
                 id="room"
                 label="Room"
                 placeholder="Enter a room's id"
-                value={room}
+                value={roomName}
                 onChange={(e) => setRoom(normalizeRoomName(e.target.value))}
                 inputProps={{ maxLength: MAX_ROOM_NAME_LENGTH }}
                 fullWidth
@@ -59,10 +59,10 @@ export default function Home() {
           </CardContent>
           <CardActions>
             <Button
-              disabled={loading || !user.name || !room}
+              disabled={loading || !user.name || !roomName}
               onClick={() => {
                 setLoading(true);
-                goToRoom(room);
+                goToRoom(roomName);
               }}
             >
               Join room
@@ -71,9 +71,12 @@ export default function Home() {
               disabled={loading || !user.name}
               onClick={async () => {
                 setLoading(true);
-                const res = await callCreateRoom();
-                if (res.data) goToRoom(res.data.name);
-                if (res.error) setError(res.error);
+                const { room, errorMessage } = await callCreateRoom();
+                if (room) {
+                  goToRoom(room.name);
+                  return;
+                }
+                if (errorMessage) setError(errorMessage);
                 setLoading(false);
               }}
             >

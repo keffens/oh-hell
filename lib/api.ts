@@ -1,26 +1,33 @@
 import { userIdToken } from "./firebase";
 import { Room } from "./room";
 
-export interface ApiResponse<T> {
-  // Either error or data is set.
-  error?: string;
-  data?: T;
-}
-
-async function fetchWithAuth<Res>(req: any): Promise<[any, number, string]> {
-  const response = await fetch("api/createRoom", {
+async function fetchWithAuth<Res>(
+  target: string,
+  req: any = {}
+): Promise<{ response?: Res; status: number; statusText?: string }> {
+  const response = await fetch(`api/${target}`, {
     method: "POST",
     body: JSON.stringify({ ...req, idToken: await userIdToken() }),
   });
   if (response.status !== 200) {
-    const { error } = await response.json();
-    return [undefined, response.status, error ?? response.statusText];
+    const { error } = await response.json().catch(() => ({}));
+    return {
+      status: response.status,
+      statusText: error || response.statusText,
+    };
   }
-  return [(await response.json()) as Res, 200, ""];
+  return { response: (await response.json()) as Res, status: 200 };
 }
 
-export async function callCreateRoom(): Promise<ApiResponse<Room>> {
-  const [room, status, statusText] = await fetchWithAuth({});
-  if (room) return { data: room };
-  return { error: `${status} Failed to create room: ${statusText}` };
+export async function callCreateRoom(): Promise<{
+  errorMessage?: string;
+  room?: Room;
+}> {
+  const {
+    response: room,
+    status,
+    statusText,
+  } = await fetchWithAuth<Room>("createRoom");
+  if (room) return { room };
+  return { errorMessage: `${status} Failed to create room: ${statusText}` };
 }
