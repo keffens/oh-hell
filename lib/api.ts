@@ -5,7 +5,7 @@ async function fetchWithAuth<Res>(
   target: string,
   req: any = {}
 ): Promise<{ response?: Res; status: number; statusText?: string }> {
-  const response = await fetch(`api/${target}`, {
+  const response = await fetch(`/api/${target}`, {
     method: "POST",
     body: JSON.stringify({ ...req, idToken: await userIdToken() }),
   });
@@ -30,4 +30,24 @@ export async function callCreateRoom(): Promise<{
   } = await fetchWithAuth<Room>("createRoom");
   if (room) return { room };
   return { errorMessage: `${status} Failed to create room: ${statusText}` };
+}
+
+export enum JoinStatus {
+  Success,
+  MissingName,
+  RoomFull,
+  GameStarted,
+}
+
+export async function callJoinRoom(roomName: string): Promise<{
+  errorMessage?: string;
+  joinStatus?: JoinStatus;
+}> {
+  const { response, status, statusText } = await fetchWithAuth<{
+    joinStatus: JoinStatus;
+  }>("joinRoom", { roomName });
+  if (response) {
+    return { joinStatus: response.joinStatus };
+  }
+  return { errorMessage: `${status} Failed to join room: ${statusText}` };
 }

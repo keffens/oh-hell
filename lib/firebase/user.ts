@@ -32,21 +32,22 @@ async function updateUser(db: Firestore, user: User) {
 export function useUser(): [User, (user: User) => void] {
   const [user, setState] = useState<User>({});
   useEffect(() => {
-    initFirebase();
-    const db = getFirestore();
-    const auth = getAuth();
-    onAuthStateChanged(auth, async (u) => {
-      if (!u?.uid) {
-        setState({});
-        throw new Error("Failed to log in");
-      }
-      const snapshot = await getDoc(doc(db, "users", u.uid));
-      if (snapshot.data()?.uid) {
-        setState(snapshot.data() as User);
-      } else {
-        updateUser(db, { uid: u.uid });
-        setState({ uid: u.uid });
-      }
+    initFirebase().then(() => {
+      const db = getFirestore();
+      const auth = getAuth();
+      onAuthStateChanged(auth, async (u) => {
+        if (!u?.uid) {
+          setState({});
+          throw new Error("Failed to log in");
+        }
+        const snapshot = await getDoc(doc(db, "users", u.uid));
+        if (snapshot.data()?.uid) {
+          setState(snapshot.data() as User);
+        } else {
+          updateUser(db, { uid: u.uid });
+          setState({ uid: u.uid });
+        }
+      });
     });
   }, []);
   return [
@@ -56,6 +57,16 @@ export function useUser(): [User, (user: User) => void] {
       setState(u);
     },
   ];
+}
+
+export function useUserId(): string | undefined {
+  const [uid, setUid] = useState<string | undefined>();
+  useEffect(() => {
+    initFirebase().then(() =>
+      onAuthStateChanged(getAuth(), (u) => setUid(u?.uid))
+    );
+  }, []);
+  return uid;
 }
 
 export function userIdToken(): Promise<string> {

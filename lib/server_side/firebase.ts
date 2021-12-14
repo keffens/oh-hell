@@ -15,9 +15,16 @@ export function initFirebaseAdmin() {
   });
 }
 
-export async function authenticateUser(req: NextApiRequest): Promise<string> {
+export async function authenticateUser(
+  reqOrToken: NextApiRequest | string
+): Promise<string> {
   try {
-    const { idToken } = await JSON.parse(req.body);
+    let idToken;
+    if (typeof reqOrToken === "string") {
+      idToken = reqOrToken;
+    } else {
+      idToken = (await JSON.parse(reqOrToken.body)).idToken;
+    }
     const token = await admin.auth().verifyIdToken(idToken);
     return token.uid;
   } catch {

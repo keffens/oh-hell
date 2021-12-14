@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Card,
   CardActions,
@@ -30,10 +29,20 @@ export default function Home() {
   return (
     <Layout title="Lobby" maxWidth="xs">
       <Stack spacing={2}>
-        <Card sx={{ position: "relative" }}>
+        <Card
+          component="form"
+          noValidate
+          autoComplete="off"
+          onSubmit={(event) => {
+            setLoading(true);
+            goToRoom(roomName);
+            event.preventDefault();
+          }}
+          sx={{ position: "relative" }}
+        >
           <LoadingOverlay show={loading} />
           <CardContent>
-            <Box component="form" noValidate autoComplete="off">
+            <Stack spacing={2}>
               <TextField
                 id="name"
                 label="Name"
@@ -44,7 +53,6 @@ export default function Home() {
                 }
                 inputProps={{ maxLength: 16 }}
                 fullWidth
-                sx={{ mb: 2 }}
               />
               <TextField
                 id="room"
@@ -55,16 +63,10 @@ export default function Home() {
                 inputProps={{ maxLength: MAX_ROOM_NAME_LENGTH }}
                 fullWidth
               />
-            </Box>
+            </Stack>
           </CardContent>
           <CardActions>
-            <Button
-              disabled={loading || !user.name || !roomName}
-              onClick={() => {
-                setLoading(true);
-                goToRoom(roomName);
-              }}
-            >
+            <Button disabled={loading || !user.name || !roomName} type="submit">
               Join room
             </Button>
             <Button

@@ -17,10 +17,11 @@ const firebaseConfig = {
 
 let app: FirebaseApp | undefined;
 
-export function initFirebase(): FirebaseApp {
-  if (app) return app;
-  app = initializeApp(firebaseConfig);
-  getAnalytics(app);
-  signInAnonymously(getAuth());
+export async function initFirebase(): Promise<FirebaseApp> {
+  if (!app) {
+    app = initializeApp(firebaseConfig);
+    getAnalytics(app);
+  }
+  await signInAnonymously(getAuth());
   return app;
 }

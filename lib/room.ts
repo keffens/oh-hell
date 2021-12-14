@@ -3,6 +3,13 @@ import { ADJECTIVES, ANIMAL_NAMES, randomWord } from "./words";
 
 export const MIN_ROOM_NAME_LENGTH = 6; // "bad-ox"
 export const MAX_ROOM_NAME_LENGTH = 25; // "old-fashioned-hummingbird"
+export const MAX_PLAYERS = 12;
+
+export enum GameState {
+  WaitingForPlayers = 0,
+  Playing,
+  Finished,
+}
 
 export interface Player {
   uid: string;
@@ -13,6 +20,7 @@ export interface Player {
 export interface Room {
   name: string;
   ownerId: string;
+  gameState: GameState;
   players: Player[];
 }
 
@@ -34,6 +42,7 @@ export function generateRoom(user: VerifiedUser): Room {
   return {
     name: generateRoomName(),
     ownerId: user.uid,
+    gameState: GameState.WaitingForPlayers,
     players: [{ uid: user.uid, name: user.name }],
   };
 }
