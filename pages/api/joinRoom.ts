@@ -20,10 +20,11 @@ export default async function handler(
     const db = getFirestore();
     const roomDoc = db.doc(`rooms/${roomName}`);
     const gettingRoom = roomDoc.get();
-    const user = (await db.doc(`users/${uid}`).get()).data() as User;
+    const userDoc = await db.doc(`users/${uid}`).get();
+    const user = userDoc.exists ? (userDoc.data() as User) : undefined;
     const room = (await gettingRoom).data() as Room;
-    const player = room.players.find((p) => p.uid === user.uid);
-    if (!user.name) {
+    const player = room.players.find((p) => p.uid === uid);
+    if (!user?.name) {
       res.status(200).json({ joinStatus: JoinStatus.MissingName });
     } else if (player) {
       if (player.name !== user.name) {
